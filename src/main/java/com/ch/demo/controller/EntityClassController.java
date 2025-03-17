@@ -26,12 +26,11 @@ public class EntityClassController {
         System.out.println("开始执行批量导出，当前时间：" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
         String filePath = System.getProperty("java.io.tmpdir") + "batchExport.xlsx";
         SseEmitter emitter = new SseEmitter(60_000L);
-        System.out.println("数据导出完成，path ：" + filePath);
-        System.out.println("总耗时：" + (System.currentTimeMillis() - startTime)/1000 + "s");
         emitter.onCompletion(() -> entityClassService.cleanupExportProcess());
         emitter.onError((ex) -> entityClassService.handleExportError((Exception) ex));
-        
         entityClassService.sseBatchExport(filePath,emitter);
+        System.out.println("数据导出完成，path ：" + filePath);
+        System.out.println("总耗时：" + (System.currentTimeMillis() - startTime)/1000 + "s");
         return emitter;
     }
 

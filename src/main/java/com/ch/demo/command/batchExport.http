@@ -1,0 +1,37 @@
+### 分页导出测试
+GET {{host}}/api/batchExport
+Accept: application/json
+
+### curl
+curl.exe -X GET http://localhost:8080/api/batchExport -v
+
+### sql
+
+
+use test
+-- 创建 user 表
+CREATE TABLE user (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50)
+);
+
+-- 创建存储过程
+DELIMITER //
+
+CREATE PROCEDURE insert_mock_data()
+BEGIN
+    DECLARE i INT DEFAULT 1;
+    -- 开始事务，提高插入性能
+    START TRANSACTION;
+    WHILE i <= 1000000 DO
+        INSERT INTO user (username) VALUES (CONCAT('user_', i));
+        SET i = i + 1;
+    END WHILE;
+    -- 提交事务
+    COMMIT;
+END //
+
+DELIMITER ;
+
+-- 调用存储过程
+CALL insert_mock_data();
